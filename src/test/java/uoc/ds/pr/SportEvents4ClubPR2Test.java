@@ -5,6 +5,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import uoc.ds.pr.exceptions.*;
+import uoc.ds.pr.model.*;
 
 import static uoc.ds.pr.util.DateUtils.createLocalDate;
 

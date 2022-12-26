@@ -2,6 +2,7 @@ package uoc.ds.pr.model;
 
 import edu.uoc.ds.adt.sequential.LinkedList;
 import edu.uoc.ds.adt.sequential.List;
+import edu.uoc.ds.traversal.Iterator;
 
 import java.time.LocalDate;
 
@@ -56,5 +57,35 @@ public class Player {
         return id.equals(playerID);
     }
 
+    public void addEvent(SportEvent sportEvent) {
+        events.insertEnd(sportEvent);
+    }
+
+    public int numEvents() {
+        return events.size();
+    }
+
+    public boolean isInSportEvent(String eventId) {
+        boolean found = false;
+        SportEvent sportEvent = null;
+        Iterator<SportEvent> it = getEvents();
+        while (it.hasNext() && !found) {
+            sportEvent = it.next();
+            found = sportEvent.is(eventId);
+        }
+        return found;
+    }
+
+    public int numSportEvents() {
+        return events.size();
+    }
+
+    public Iterator<SportEvent> getEvents() {
+        return events.values();
+    }
+
+    public boolean hasEvents() {
+        return this.events.size()>0;
+    }
 
 }
