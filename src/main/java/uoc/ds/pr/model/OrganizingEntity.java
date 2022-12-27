@@ -62,4 +62,8 @@ public class OrganizingEntity {
         return events.values();
     }
 
+    public int numAttenders() {
+        return 1; // TODO
+    }
+
 }

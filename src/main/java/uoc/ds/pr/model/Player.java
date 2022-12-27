@@ -14,7 +14,9 @@ public class Player {
     private List<SportEvent> events;
     private LocalDate birthday;
 
-    public Player(String idUser, String name, String surname, LocalDate birthday) {
+    private int level;
+
+    public Player(String idUser, String name, String surname, LocalDate birthday, int level) {
         this.setId(idUser);
         this.setName(name);
         this.setSurname(surname);
@@ -38,6 +40,10 @@ public class Player {
         this.birthday = birthday;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     public String getId() {
         return id;
     }
@@ -53,6 +59,11 @@ public class Player {
     public LocalDate getBirthday() {
         return birthday;
     }
+
+    public int getLevel() {
+        return level;
+    }
+
     public boolean is(String playerID) {
         return id.equals(playerID);
     }
