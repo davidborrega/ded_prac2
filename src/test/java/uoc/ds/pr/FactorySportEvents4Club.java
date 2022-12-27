@@ -3,6 +3,11 @@ package uoc.ds.pr;
 import static uoc.ds.pr.util.DateUtils.createLocalDate;
 
 import org.junit.Assert;
+import uoc.ds.pr.exceptions.NoRatingsException;
+import uoc.ds.pr.exceptions.NoSportEventsException;
+import uoc.ds.pr.exceptions.PlayerNotFoundException;
+import uoc.ds.pr.model.File;
+import uoc.ds.pr.util.ResourceUtil;
 
 
 public class FactorySportEvents4Club {
