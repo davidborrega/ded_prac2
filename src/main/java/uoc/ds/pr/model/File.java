@@ -90,6 +90,10 @@ public class File {
         this.status = status;
     }
 
+    public SportEvents4Club.Type getType() {
+        return type;
+    }
+
     public void update(SportEvents4Club.Status status, LocalDate date, String description) {
         this.setStatus(status);
         this.setDateStatus(date);

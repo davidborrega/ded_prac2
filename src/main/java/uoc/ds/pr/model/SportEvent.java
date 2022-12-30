@@ -1,5 +1,7 @@
 package uoc.ds.pr.model;
 
+import edu.uoc.ds.adt.nonlinear.HashTable;
+import edu.uoc.ds.adt.nonlinear.PriorityQueue;
 import edu.uoc.ds.adt.sequential.LinkedList;
 import edu.uoc.ds.adt.sequential.List;
 import edu.uoc.ds.adt.sequential.Queue;
@@ -33,6 +35,12 @@ public class SportEvent {
 
     private Queue<Enrollment> enrollments;
 
+    private PriorityQueue<Enrollment> substituteEnrollments;
+
+    private List<Worker> workers;
+
+    private HashTable<String, Attender> attenders;
+
     public SportEvent(String eventId, String description, SportEvents4Club.Type type,
                       LocalDate startDate, LocalDate endDate, int max, File file) {
         setEventId(eventId);
@@ -43,8 +51,11 @@ public class SportEvent {
         setMax(max);
         setFile(file);
         this.enrollments = new QueueArrayImpl<>(MAX_NUM_ENROLLMENT);
-        this.ratings = new LinkedList<>();
+        this.substituteEnrollments = new PriorityQueue<Enrollment>();
+        this.ratings = new LinkedList<Rating>();
         numSubstitutes = 0;
+        this.workers = new LinkedList<Worker>();
+        this.attenders = new HashTable<String, Attender>();
     }
 
     public String getEventId() {
@@ -158,6 +169,14 @@ public class SportEvent {
 
     public int getNumSubstitutes() {
         return numSubstitutes;
+    }
+
+    public OrganizingEntity getOrganizingEntity() {
+        return new OrganizingEntity(1, "a", "a");
+    }
+
+    public int numAttenders() {
+        return 1;
     }
 
 }

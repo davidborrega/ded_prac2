@@ -1,5 +1,7 @@
 package uoc.ds.pr;
 
+import edu.uoc.ds.adt.nonlinear.DictionaryAVLImpl;
+import edu.uoc.ds.adt.nonlinear.HashTable;
 import edu.uoc.ds.traversal.Iterator;
 import uoc.ds.pr.exceptions.*;
 import uoc.ds.pr.model.*;
@@ -7,14 +9,50 @@ import uoc.ds.pr.model.*;
 import java.time.LocalDate;
 
 public class SportEvents4ClubImpl implements SportEvents4Club {
-    @Override
-    public void addPlayer(String id, String name, String surname, LocalDate dateOfBirth) {
+
+    private DictionaryAVLImpl<String, Player> players;
+    private int numPlayers;
+
+    private HashTable<String, OrganizingEntity> organizingEntities;
+    private int numOrganizingEntities;
+
+    public SportEvents4ClubImpl() {
+        // Players
+        this.players = new DictionaryAVLImpl<String, Player>();
+        this.numPlayers = 0;
+
+        // Organizing Entities
+        this.organizingEntities = new HashTable<String, OrganizingEntity>(SportEvents4Club.MAX_NUM_ORGANIZING_ENTITIES);
+        this.numOrganizingEntities = 0;
+
 
     }
 
     @Override
-    public void addOrganizingEntity(String id, String name, String description) {
+    public void addPlayer(String id, String name, String surname, LocalDate dateOfBirth) {
+        Player player = this.getPlayer(id);
+        if (player != null) {
+            player.setName(name);
+            player.setSurname(surname);
+            player.setBirthday(dateOfBirth);
+        } else {
+            player = new Player(id, name, surname, dateOfBirth);
+            players.put(id, player);
+            numPlayers++;
+        }
+    }
 
+    @Override
+    public void addOrganizingEntity(String id, String name, String description) {
+        OrganizingEntity organizingEntity = this.getOrganizingEntity(id);
+        if (organizingEntity != null) {
+            organizingEntity.setName(name);
+            organizingEntity.setDescription(description);
+        } else {
+            organizingEntity = new OrganizingEntity(id, name, description);
+            organizingEntities.put(id, organizingEntity);
+            numOrganizingEntities++;
+        }
     }
 
     @Override
@@ -209,7 +247,10 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public Player getPlayer(String playerId) {
-        return null;
+        if (this.players.isEmpty()) {
+            return null;
+        }
+        return this.players.get(playerId);
     }
 
     @Override
@@ -219,7 +260,10 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public OrganizingEntity getOrganizingEntity(String id) {
-        return null;
+        if (this.organizingEntities.isEmpty()) {
+            return  null;
+        }
+        return this.organizingEntities.get(id);
     }
 
     @Override
