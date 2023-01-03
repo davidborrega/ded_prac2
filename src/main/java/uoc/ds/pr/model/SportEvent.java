@@ -17,6 +17,7 @@ import static uoc.ds.pr.SportEvents4Club.MAX_NUM_ENROLLMENT;
 public class SportEvent {
 
     public static final Comparator<SportEvent> CMP_V = (se1, se2)->Double.compare(se1.rating(), se2.rating());
+
     public static final Comparator<String> CMP_K = (k1, k2)-> k1.compareTo(k2);
 
     private String eventId;

@@ -2,9 +2,11 @@ package uoc.ds.pr;
 
 import edu.uoc.ds.adt.nonlinear.DictionaryAVLImpl;
 import edu.uoc.ds.adt.nonlinear.HashTable;
+import edu.uoc.ds.adt.nonlinear.PriorityQueue;
 import edu.uoc.ds.traversal.Iterator;
 import uoc.ds.pr.exceptions.*;
 import uoc.ds.pr.model.*;
+import uoc.ds.pr.util.OrderedVector;
 
 import java.time.LocalDate;
 
@@ -12,18 +14,46 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     private DictionaryAVLImpl<String, Player> players;
     private int numPlayers;
+    private Player mostActivePlayer;
 
     private HashTable<String, OrganizingEntity> organizingEntities;
     private int numOrganizingEntities;
+    private OrderedVector<OrganizingEntity> mostCooperatingOrganizationEntity;
+
+    private PriorityQueue<File> files;
+    private int totalFiles;
+    private int rejectedFiles;
+
+    private DictionaryAVLImpl<String, SportEvent> sportEvents;
+    private OrderedVector<SportEvent> bestSportEvent;
+    private SportEvent mostAttendedSportEvent;
+
+    private HashTable<String, Worker> workers;
+    private Role[] roles;
 
     public SportEvents4ClubImpl() {
         // Players
         this.players = new DictionaryAVLImpl<String, Player>();
         this.numPlayers = 0;
+        this.mostActivePlayer = null;
 
         // Organizing Entities
         this.organizingEntities = new HashTable<String, OrganizingEntity>(SportEvents4Club.MAX_NUM_ORGANIZING_ENTITIES);
         this.numOrganizingEntities = 0;
+
+        // Files
+        this.files = new PriorityQueue<File>(File.CMP_Q);
+        this.totalFiles = 0;
+        this.rejectedFiles = 0;
+
+        // Sport Events
+        this.sportEvents = new DictionaryAVLImpl<String, SportEvent>();
+        this.bestSportEvent = new OrderedVector<SportEvent>(MAX_NUM_SPORT_EVENTS, SportEvent.CMP_V);
+        this.mostAttendedSportEvent = null;
+
+        // Roles
+
+        // Workers
 
 
     }
@@ -57,12 +87,38 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public void addFile(String id, String eventId, String orgId, String description, Type type, byte resources, int max, LocalDate startDate, LocalDate endDate) throws OrganizingEntityNotFoundException {
-
+        OrganizingEntity organization = this.organizingEntities.get(orgId);
+        if (organization == null) {
+            throw new OrganizingEntityNotFoundException();
+        }
+        this.files.add(new File(id, eventId, description, type, startDate, endDate, resources, max, orgId));
+        this.totalFiles++;
     }
 
     @Override
     public File updateFile(Status status, LocalDate date, String description) throws NoFilesException {
-        return null;
+        if (this.files.isEmpty()) {
+            throw new NoFilesException();
+        }
+        // Get first file of queue of files (using FIFO strategy) and remove it.
+        File file = this.files.poll();
+        if (status == Status.ENABLED) {
+            // Update file
+            file.setDescription(description);
+            file.setStatus(status);
+            file.setEndDate(date);
+            // Add new event into sport events.
+            SportEvent sportEvent = file.newSportEvent();
+            this.sportEvents.put(file.getEventId(), sportEvent);
+            // Add new event into best sport events vector.
+            this.bestSportEvent.update(sportEvent);
+            // Add new event into linked list of organizing entity.
+            this.getOrganizingEntity(file.getOrgId()).addEvent(sportEvent);
+        } else if (status == Status.DISABLED) {
+            // Increase the number of rejected files and no save data.
+            this.rejectedFiles++;
+        }
+        return file;
     }
 
     @Override
@@ -77,12 +133,23 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public Iterator<SportEvent> getSportEventsByOrganizingEntity(String organizationId) throws NoSportEventsException {
-        return null;
+        OrganizingEntity organizingEntity = this.getOrganizingEntity(organizationId);
+        if (organizingEntity == null) {
+            throw new NoSportEventsException();
+        }
+        if (organizingEntity.numEvents() == 0) {
+            throw new NoSportEventsException();
+        }
+        return organizingEntity.sportEvents();
     }
 
     @Override
     public Iterator<SportEvent> getAllEvents() throws NoSportEventsException {
-        return null;
+        if (this.sportEvents.size() == 0) {
+            // If sport event not found, throw custom exception.
+            throw new NoSportEventsException();
+        }
+        return this.sportEvents.values();
     }
 
     @Override
@@ -102,7 +169,10 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public Player mostActivePlayer() throws PlayerNotFoundException {
-        return null;
+        if (mostActivePlayer == null) {
+            throw new PlayerNotFoundException();
+        }
+        return mostActivePlayer;
     }
 
     @Override

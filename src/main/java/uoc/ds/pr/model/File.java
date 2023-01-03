@@ -3,35 +3,44 @@ package uoc.ds.pr.model;
 import uoc.ds.pr.SportEvents4Club;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 
 public class File {
 
+    private String id;
     private final SportEvents4Club.Type type;
     private String eventId;
     private String description;
-    private String recordId;
     private byte resources;
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDate dateStatus;
     private String descriptionStatus;
-    private int num;
+    private int max;
     private SportEvents4Club.Status status;
-    private OrganizingEntity organization;
 
+    private String orgId;
 
-    public File(String recordId, String actId, String description, SportEvents4Club.Type type, LocalDate startDate, LocalDate endDate,
-                byte resources, int num, OrganizingEntity organization) {
-        this.recordId = recordId;
-        this.eventId = actId;
+    public static Comparator<File> CMP_Q = (File f1, File f2) -> {
+      int cmp = f1.getStartDate().compareTo(f2.getStartDate());
+      if (cmp == 0) {
+          // Aforament
+      }
+      return cmp;
+    };
+
+    public File(String id, String eventId, String description, SportEvents4Club.Type type, LocalDate startDate, LocalDate endDate,
+                byte resources, int max, String orgId) {
+        this.id = id;
+        this.eventId = eventId;
         this.description = description;
         this.type = type;
         this.startDate = startDate;
         this.resources = resources;
         this.endDate = endDate;
-        this.num = num;
+        this.max = max;
         this.status = SportEvents4Club.Status.PENDING;
-        this.organization = organization;
+        this.orgId = orgId;
     }
 
     public String getEventId() {
@@ -59,11 +68,11 @@ public class File {
     }
 
     public String getFileId() {
-        return recordId;
+        return id;
     }
 
-    public void setRecordId(String recordId) {
-        this.recordId = recordId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public LocalDate getStartDate() {
@@ -94,6 +103,30 @@ public class File {
         return type;
     }
 
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setMax(int max) {
+        this.max = max;
+    }
+
+    public int getMax() {
+        return max;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
     public void update(SportEvents4Club.Status status, LocalDate date, String description) {
         this.setStatus(status);
         this.setDateStatus(date);
@@ -105,11 +138,9 @@ public class File {
     }
 
     public SportEvent newSportEvent() {
-
         SportEvent sportEvent = new SportEvent(this.eventId, this.description, this.type,
-                this.startDate, this.endDate, this.num, this);
-        this.organization.addEvent(sportEvent);
-
+                this.startDate, this.endDate, this.max, this);
         return sportEvent;
     }
+
 }
