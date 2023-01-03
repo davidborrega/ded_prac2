@@ -172,7 +172,7 @@ public class SportEvent {
     }
 
     public OrganizingEntity getOrganizingEntity() {
-        return new OrganizingEntity(1, "a", "a");
+        return new OrganizingEntity("1", "a", "a");
     }
 
     public int numAttenders() {
