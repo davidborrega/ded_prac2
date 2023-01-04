@@ -107,8 +107,17 @@ public class Player {
         return events.values();
     }
 
-    public boolean hasEvents() {
-        return this.events.size()>0;
+    // This method evaluate if player has participated in sport event or not.
+    public boolean hasParticipatedInEvent(SportEvent sportEvent) {
+        if (this.numEvents() == 0) {
+            return false;
+        }
+        for (Iterator<SportEvent> it = this.getEvents(); it.hasNext();) {
+            if (it.next().getEventId() == sportEvent.getEventId()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

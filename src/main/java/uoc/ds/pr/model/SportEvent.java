@@ -16,7 +16,7 @@ import static uoc.ds.pr.SportEvents4Club.MAX_NUM_ENROLLMENT;
 
 public class SportEvent {
 
-    public static final Comparator<SportEvent> CMP_V = (se1, se2)->Double.compare(se1.rating(), se2.rating());
+    public static final Comparator<SportEvent> CMP_V = (se1, se2)-> Double.compare(se1.rating(), se2.rating());
 
     public static final Comparator<String> CMP_K = (k1, k2)-> k1.compareTo(k2);
 
@@ -115,24 +115,29 @@ public class SportEvent {
         this.file = file;
     }
 
-    public double rating() {
-        return (this.ratings.size()>0?(sumRating / this.ratings.size()):0);
+    public Iterator<uoc.ds.pr.model.Rating> getRatings() {
+        return this.ratings.values();
     }
 
-    public void addRating(SportEvents4Club.Rating rating, String message, Player player) {
-        Rating newRating = new Rating(rating, message, player);
-        ratings.insertEnd(newRating);
-        sumRating+=rating.getValue();
+    public int getTotalRatings() {
+        return this.ratings.size();
     }
 
-    public boolean hasRatings() {
-        return ratings.size()>0;
+    public void addRating(Rating rating) {
+        this.ratings.insertEnd(rating);
     }
 
-    public Iterator<Rating> ratings() {
-        return ratings.values();
+    public Double rating() {
+        int numberOfRatings = this.getTotalRatings();
+        if (numberOfRatings == 0) {
+            return Double.valueOf(0);
+        }
+        int rating = 0;
+        for (Iterator<Rating> it = this.getRatings(); it.hasNext();) {
+            rating += it.next().rating().getValue();
+        }
+        return (double) rating / (double) numberOfRatings;
     }
-
 
     public void addEnrollment(Player player) {
         addEnrollment(player, false);

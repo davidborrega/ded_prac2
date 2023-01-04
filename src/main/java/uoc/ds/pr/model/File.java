@@ -24,7 +24,7 @@ public class File {
     public static Comparator<File> CMP_Q = (File f1, File f2) -> {
       int cmp = f1.getStartDate().compareTo(f2.getStartDate());
       if (cmp == 0) {
-          // Aforament
+          cmp = ((Integer) f2.getMax()).compareTo((Integer) f1.getMax());
       }
       return cmp;
     };
