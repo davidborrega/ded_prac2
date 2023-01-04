@@ -189,6 +189,10 @@ public class SportEvent {
         return this.attenders.get(phone);
     }
 
+    public Iterator<Attender> getAttenders() {
+        return this.attenders.values();
+    }
+
     public int numAttenders() {
         return this.attenders.size();
     }

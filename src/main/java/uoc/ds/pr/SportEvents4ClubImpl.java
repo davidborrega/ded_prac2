@@ -309,7 +309,11 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public Level getLevel(String playerId) throws PlayerNotFoundException {
-        return null;
+        Player player = getPlayer(playerId);
+        if (player == null) {
+            throw new PlayerNotFoundException();
+        }
+        return player.getLevel();
     }
 
     @Override
@@ -347,7 +351,14 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public Iterator<Attender> getAttenders(String eventId) throws SportEventNotFoundException, NoAttendersException {
-        return null;
+        SportEvent sportEvent = getSportEvent(eventId);
+        if (sportEvent == null) {
+            throw new SportEventNotFoundException();
+        }
+        if (sportEvent.numAttenders() == 0) {
+            throw new NoAttendersException();
+        }
+        return sportEvent.getAttenders();
     }
 
     @Override
