@@ -181,8 +181,20 @@ public class SportEvent {
         return new OrganizingEntity("1", "a", "a");
     }
 
+    public void addAttender(Attender attender) {
+        this.attenders.put(attender.getPhone(), attender);
+    }
+
+    public Attender getAttender(String phone) {
+        return this.attenders.get(phone);
+    }
+
     public int numAttenders() {
-        return 1;
+        return this.attenders.size();
+    }
+
+    public boolean isLimitOfAttenders() {
+        return (this.numAttenders() >= this.getMax());
     }
 
 }

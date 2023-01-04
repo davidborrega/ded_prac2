@@ -31,6 +31,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
     private HashTable<String, Worker> workers;
     private int numWorkers;
     private Role[] roles;
+    private int numRoles;
 
     public SportEvents4ClubImpl() {
         // Players
@@ -53,6 +54,8 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         this.mostAttendedSportEvent = null;
 
         // Roles
+        this.roles = new Role[250]; // TODO: define limit of roles
+        this.numRoles = 0;
 
         // Workers
         this.workers = new HashTable<String, Worker>();
@@ -248,12 +251,45 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public void addRole(String roleId, String description) {
-
+        Role role = getRole(roleId);
+        if (role != null) {
+            role.setDescription(description);
+        } else {
+            this.roles[this.numRoles()] = new Role(roleId, description);
+            this.numRoles++;
+        }
     }
 
     @Override
     public void addWorker(String dni, String name, String surname, LocalDate birthDay, String roleId) {
+        Worker worker = getWorker(dni);
+        if (worker == null) {
+            Worker newWorker = new Worker(dni, name, surname, birthDay, roleId);
+            this.workers.put(dni, newWorker);
+            this.addWorkerIntoRole(roleId, newWorker);
+        } else {
+            // Set worker variables.
+            worker.setName(name);
+            worker.setSurname(surname);
+            worker.setBirthDay(birthDay);
+            // Replace role if it's not the same
+            if (!worker.getRoleId().equals(roleId)) {
+                // Remove the worker from the old role
+                Role oldRole = this.getRole(worker.getRoleId());
+                oldRole.removeWorker(worker);
+                // Add the worker to the new role
+                this.addWorkerIntoRole(roleId, worker);
+                // Update the role ID
+                worker.setRoleId(roleId);
+            }
+        }
+    }
 
+    private void addWorkerIntoRole(String roleId, Worker worker) {
+        Role role = getRole(roleId);
+        if (role != null) {
+            role.addWorker(worker);
+        }
     }
 
     @Override
@@ -283,12 +319,30 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public void addAttender(String phone, String name, String eventId) throws AttenderAlreadyExistsException, SportEventNotFoundException, LimitExceededException {
-
+        SportEvent sportEvent = getSportEvent(eventId);
+        if (sportEvent == null) {
+            throw new SportEventNotFoundException();
+        }
+        if (sportEvent.isLimitOfAttenders()) {
+            throw new LimitExceededException();
+        }
+        if (sportEvent.getAttender(phone) != null) {
+            throw new AttenderAlreadyExistsException();
+        }
+        sportEvent.addAttender(new Attender(phone, name, eventId));
     }
 
     @Override
     public Attender getAttender(String phone, String sportEventId) throws SportEventNotFoundException, AttenderNotFoundException {
-        return null;
+        SportEvent sportEvent = getSportEvent(sportEventId);
+        if (sportEvent == null) {
+            throw new SportEventNotFoundException();
+        }
+        Attender attender = sportEvent.getAttender(phone);
+        if (attender == null) {
+            throw new AttenderNotFoundException();
+        }
+        return attender;
     }
 
     @Override
@@ -428,7 +482,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public int numRoles() {
-        return this.numRoles();
+        return this.numRoles;
     }
 
     @Override
@@ -453,6 +507,10 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public int numWorkersByRole(String roleId) {
+        Role role = getRole(roleId);
+        if (role != null) {
+            return role.numWorkers();
+        }
         return 0;
     }
 
@@ -468,7 +526,11 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public int numAttenders(String sportEventId) {
-        return 0;
+        SportEvent sportEvent = getSportEvent(sportEventId);
+        if (sportEvent == null) {
+            return 0;
+        }
+        return sportEvent.numAttenders();
     }
 
     @Override

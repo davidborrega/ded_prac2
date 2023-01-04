@@ -400,7 +400,7 @@ public interface SportEvents4Club {
      * @throws SportEventNotFoundException if sport event not found
      * @throws LimitExceededException if exceed the number of people
      */
-    public void addAttender(String phone, String name, String eventId) throws AttenderAlreadyExistsException, SportEventNotFoundException, LimitExceededException;
+    public void addAttender(String phone, String name, String eventId) throws AttenderAlreadyExistsException, SportEventNotFoundException, LimitExceededException, AttenderNotFoundException;
 
     /**
      * Get an attendee at a sporting event.
