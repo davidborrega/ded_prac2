@@ -113,7 +113,8 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             SportEvent sportEvent = file.newSportEvent();
             this.sportEvents.put(file.getEventId(), sportEvent);
             // Add new event into best sport events vector.
-            this.bestSportEvents.add(sportEvent);
+            //this.bestSportEvents.add(sportEvent);
+            this.bestSportEvents.update(sportEvent);
             // Add new event into linked list of organizing entity.
             this.getOrganizingEntity(file.getOrgId()).addEvent(sportEvent);
         } else if (status == Status.DISABLED) {
@@ -239,7 +240,10 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public SportEvent bestSportEvent() throws SportEventNotFoundException {
-        return null;
+        if (bestSportEvents.size() == 0) {
+            throw new SportEventNotFoundException();
+        }
+        return bestSportEvents.elementAt(0);
     }
 
     @Override

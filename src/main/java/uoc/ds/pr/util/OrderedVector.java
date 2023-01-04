@@ -10,103 +10,118 @@ import java.util.Comparator;
 
 public class OrderedVector<E> implements FiniteContainer<E> {
 
-    private E[] elements;
-    private int numberOfElements;
     private Comparator<E> comparator;
+
+    private E[] data;
+    private int len;
+
 
     public OrderedVector(int max, Comparator<E> comparator) {
         this.comparator = comparator;
-        this.elements = (E[]) new Object[max];
-        this.numberOfElements = 0;
+        data = (E[])new Object[max];
+        len = 0;
     }
 
-    @Override
-    public boolean isFull() {
-        return this.numberOfElements == this.elements.length;
+    public E elementAt(int i) {
+        return this.data[i];
     }
 
-    @Override
-    public boolean isEmpty() {
-        return this.numberOfElements == 0;
+    /**
+     * método que indica si un elemento es igual que el segundo
+     * @param elem1
+     * @param elem2
+     * @return
+     */
+    private boolean compare(E elem1, E elem2) {
+        return ((Comparable<E>)elem1).compareTo(elem2) == 0;
     }
 
-    @Override
-    public int size() {
-        return this.numberOfElements;
+    public void rshift(int i) {
+        // desplazamiento de todos los elementos una posición
+        int p = len-1;
+        while (p >= i) {
+            data[p+1] = data[p];
+            p--;
+        }
     }
 
-    @Override
+    public void lshift(int i) {
+        // desplazamiento de todos los elementos una posición
+        int p = i;
+        while (p < len-1) {
+            data[p] = data[p+1];
+            p++;
+        }
+    }
+
+
+    public void update(E vIn) {
+        int i = 0;
+
+        // Si existe el elemento borramos el elemento para volverlo a insertar en su posición
+        if (isFull()) {
+            E pOut = last();
+            if (comparator.compare(pOut, vIn) < 0) {
+                delete(pOut);
+                update(vIn);
+                return;
+            }
+            else {
+                return;
+            }
+        }
+
+        // hacemos un recorrido para determinar la posición en la que insertar
+        while (i < len && data[i] != null && comparator.compare(data[i], vIn) >= 0) {
+            i++;
+        }
+
+        // desplazamiento hacia la derecha de todos los elementos
+        rshift(i);
+
+        // se inserta el elemento en la posición
+        data[i] = vIn;
+        len++;
+
+    }
+
+    public void delete (E elem) {
+        int i = 0;
+        boolean found = false;
+
+        while (!found && i < len)
+            found = compare(elem, data[i++]);
+
+        if (found) {
+            if (i<len) {
+                lshift(i-1);
+            }
+            else {
+                lshift(i);
+            }
+            len--;
+        }
+    }
+
     public Iterator<E> values() {
-        return new IteratorArrayImpl<E>(this.elements, this.numberOfElements, 0);
+        return (Iterator<E>)new IteratorArrayImpl<>(data, len,0);
     }
 
-    // Get element by position
-    public E get(int position) {
-        if (position < 0 || position >= this.numberOfElements) {
-            return null;
-        }
-        return this.elements[position];
+
+    public boolean isEmpty() {
+        return len == 0;
     }
 
-    // Add elem into ordered vector
-    public void add(E elem) {
-        if (this.isFull()) {
-            throw new FullContainerException();
-        }
-        this.elements[this.numberOfElements] = elem;
-        this.numberOfElements++;
-        // ordering vector
-        this.orderVector(elem);
+    public int size() {
+        return len;
     }
 
-    private void orderVector(E newElement) {
-        E elem;
-        int position = this.numberOfElements - 1;
-        while (position > 0) {
-            elem = this.get(position-1);
-            if (this.comparator.compare(newElement, elem) < 0) {
-                this.elements[position] = elem;
-                this.elements[position-1] = newElement;
-            } else {
-                break;
-            }
-            position--;
-        }
+    public boolean isFull() {
+        return len == data.length;
     }
 
-    // Update element of vector
-    public void update(E elem) {
-        int position = this.getPosition(elem);
-        if (position == -1) {
-            throw new InvalidPositionException();
-        }
-        // First, remove current position to add new elem with the updated information to will be ordered inside vector.
-        this.updateVector(elem, position);
-    }
-
-    private int getPosition(E elem) {
-        int position = 0;
-        for (Iterator<E> it = this.values(); it.hasNext();) {
-            if (it.next().equals(elem)) {
-                return position;
-            }
-            position++;
-        }
-        return -1;
-    }
-
-    private void updateVector(E elem, int position) {
-        this.delete(position);
-        this.add(elem);
-    }
-
-    // Delete a position of vector
-    public void delete(int position) {
-        for (int i = position; i < this.numberOfElements-1; i++) {
-            this.elements[i] = this.elements[i+1];
-        }
-        this.elements[this.numberOfElements-1] = null;
-        this.numberOfElements--;
+    public E last() {
+        return data[len-1];
     }
 
 }
