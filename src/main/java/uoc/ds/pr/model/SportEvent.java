@@ -167,7 +167,7 @@ public class SportEvent implements Comparable<SportEvent> {
     }
 
     public OrganizingEntity getOrganizingEntity() {
-        return this.organizingEntity;
+        return this.file.getOrganization();
     }
 
     public void addAttender(Attender attender) {

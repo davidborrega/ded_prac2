@@ -85,7 +85,6 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             organizingEntity = new OrganizingEntity(id, name, description);
             this.organizingEntities.put(id, organizingEntity);
             this.numOrganizingEntities++;
-            //this.bestOrganizationEntities.update(organizingEntity);
         }
     }
 
@@ -95,7 +94,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (organization == null) {
             throw new OrganizingEntityNotFoundException();
         }
-        this.files.add(new File(id, eventId, description, type, startDate, endDate, resources, max, orgId));
+        this.files.add(new File(id, eventId, description, type, startDate, endDate, resources, max, organization));
         this.totalFiles++;
     }
 
@@ -114,10 +113,9 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             // Add new event into sport events.
             SportEvent sportEvent = file.newSportEvent();
             // Add new event into linked list of organizing entity.
-            OrganizingEntity organizingEntity = this.getOrganizingEntity(file.getOrgId());
+            OrganizingEntity organizingEntity = file.getOrganization();
             if (organizingEntity != null) {
                 sportEvent.setOrganizingEntity(organizingEntity);
-                organizingEntity.addEvent(sportEvent);
             }
             this.sportEvents.put(file.getEventId(), sportEvent);
             // Add new event into best sport events vector.

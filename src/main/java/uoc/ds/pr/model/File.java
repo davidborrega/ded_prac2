@@ -19,7 +19,7 @@ public class File {
     private int max;
     private SportEvents4Club.Status status;
 
-    private String orgId;
+    private OrganizingEntity organization;
 
     public static Comparator<File> CMP_Q = (File f1, File f2) -> {
       int cmp = f1.getStartDate().compareTo(f2.getStartDate());
@@ -30,7 +30,7 @@ public class File {
     };
 
     public File(String id, String eventId, String description, SportEvents4Club.Type type, LocalDate startDate, LocalDate endDate,
-                byte resources, int max, String orgId) {
+                byte resources, int max, OrganizingEntity organization) {
         this.id = id;
         this.eventId = eventId;
         this.description = description;
@@ -40,8 +40,9 @@ public class File {
         this.endDate = endDate;
         this.max = max;
         this.status = SportEvents4Club.Status.PENDING;
-        this.orgId = orgId;
+        this.organization = organization;
     }
+
 
     public String getEventId() {
         return eventId;
@@ -103,12 +104,12 @@ public class File {
         return type;
     }
 
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
+    public OrganizingEntity getOrganization() {
+        return organization;
     }
 
-    public String getOrgId() {
-        return orgId;
+    public void setOrganization(OrganizingEntity organization) {
+        this.organization = organization;
     }
 
     public void setMax(int max) {
@@ -140,6 +141,7 @@ public class File {
     public SportEvent newSportEvent() {
         SportEvent sportEvent = new SportEvent(this.eventId, this.description, this.type,
                 this.startDate, this.endDate, this.max, this);
+        this.organization.addEvent(sportEvent);
         return sportEvent;
     }
 
