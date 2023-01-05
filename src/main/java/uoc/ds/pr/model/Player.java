@@ -4,6 +4,7 @@ import edu.uoc.ds.adt.sequential.LinkedList;
 import edu.uoc.ds.adt.sequential.List;
 import edu.uoc.ds.traversal.Iterator;
 import uoc.ds.pr.SportEvents4Club;
+import uoc.ds.pr.util.LevelHelper;
 
 import java.time.LocalDate;
 
@@ -69,7 +70,7 @@ public class Player {
     }
 
     public SportEvents4Club.Level getLevel() {
-        return level;
+        return LevelHelper.getLevel(this.getNumRatings());
     }
 
     public void setNumRatings(int numRatings) {

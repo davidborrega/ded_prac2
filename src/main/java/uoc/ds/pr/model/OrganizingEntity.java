@@ -4,12 +4,18 @@ import edu.uoc.ds.adt.sequential.LinkedList;
 import edu.uoc.ds.adt.sequential.List;
 import edu.uoc.ds.traversal.Iterator;
 
+import java.util.Comparator;
+
 public class OrganizingEntity {
 
     private String organizationId;
     private String description;
     private String name;
     private List<SportEvent> sportEvents;
+
+    public static final Comparator<OrganizingEntity> CMP_MOST_ATTENDERS = (OrganizingEntity o1, OrganizingEntity o2) -> {
+        return Integer.compare(o1.numAttenders(), o2.numAttenders());
+    };
 
     public OrganizingEntity(String organizationId, String name, String description) {
         this.organizationId = organizationId;

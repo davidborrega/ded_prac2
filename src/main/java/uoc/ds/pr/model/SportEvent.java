@@ -34,8 +34,6 @@ public class SportEvent {
     private Queue<Enrollment> players;
 
     private PriorityQueue<Enrollment> substitutes;
-    private int numSubstitutes;
-
     private List<Worker> workers;
 
     private HashTable<String, Attender> attenders;
@@ -54,7 +52,6 @@ public class SportEvent {
         this.players = new QueueArrayImpl<>(MAX_NUM_ENROLLMENT);
         this.substitutes = new PriorityQueue<Enrollment>(Enrollment.CMP_PLAYER);
         this.ratings = new LinkedList<Rating>();
-        this.numSubstitutes = 0;
         this.workers = new LinkedList<Worker>();
         this.attenders = new HashTable<String, Attender>();
         this.organizingEntity = null;
@@ -141,20 +138,11 @@ public class SportEvent {
     }
 
     public void addPlayer(Player player) {
-        this.addEnrollment(player, false);
+        this.players.add(new Enrollment(player, false));
     }
 
     public void addSubstitute(Player player) {
-        this.addEnrollment(player, true);
-        this.numSubstitutes++;
-    }
-
-    public void addEnrollment(Player player, boolean isSubstitute) {
-        this.players.add(new Enrollment(player, isSubstitute));
-    }
-
-    public boolean isFull() {
-        return (players.size() >= max);
+        this.substitutes.add(new Enrollment(player, true));
     }
 
     public int numPlayers() {
@@ -162,7 +150,7 @@ public class SportEvent {
     }
 
     public int numSubstitutes() {
-        return this.numSubstitutes;
+        return this.substitutes.size();
     }
 
     public Iterator<Enrollment> getSubstitutes() {

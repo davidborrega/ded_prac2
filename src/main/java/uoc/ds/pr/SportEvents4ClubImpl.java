@@ -18,7 +18,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     private HashTable<String, OrganizingEntity> organizingEntities;
     private int numOrganizingEntities;
-    private OrderedVector<OrganizingEntity> mostCooperatingOrganizationEntity;
+    private OrderedVector<OrganizingEntity> bestOrganizationEntities;
 
     private PriorityQueue<File> files;
     private int totalFiles;
@@ -26,7 +26,6 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     private DictionaryAVLImpl<String, SportEvent> sportEvents;
     private OrderedVector<SportEvent> bestSportEvents;
-    private SportEvent mostAttendedSportEvent;
 
     private HashTable<String, Worker> workers;
     private int numWorkers;
@@ -42,6 +41,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         // Organizing Entities
         this.organizingEntities = new HashTable<String, OrganizingEntity>(SportEvents4Club.MAX_NUM_ORGANIZING_ENTITIES);
         this.numOrganizingEntities = 0;
+        this.bestOrganizationEntities = new OrderedVector<OrganizingEntity>(SportEvents4Club.MAX_NUM_ORGANIZING_ENTITIES, OrganizingEntity.CMP_MOST_ATTENDERS);
 
         // Files
         this.files = new PriorityQueue<File>(File.CMP_Q);
@@ -50,8 +50,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
         // Sport Events
         this.sportEvents = new DictionaryAVLImpl<String, SportEvent>();
-        this.bestSportEvents = new OrderedVector<SportEvent>(MAX_NUM_SPORT_EVENTS, SportEvent.CMP_V);
-        this.mostAttendedSportEvent = null;
+        this.bestSportEvents = new OrderedVector<SportEvent>(SportEvents4Club.MAX_NUM_SPORT_EVENTS, SportEvent.CMP_V);
 
         // Roles
         this.roles = new Role[250]; // TODO: define limit of roles
@@ -87,6 +86,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             this.organizingEntities.put(id, organizingEntity);
             this.numOrganizingEntities++;
         }
+        this.bestOrganizationEntities.update(organizingEntity);
     }
 
     @Override
@@ -104,7 +104,6 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (this.files.isEmpty()) {
             throw new NoFilesException();
         }
-
         // Get the file of priority queue of files and remove it.
         File file = this.files.poll();
         if (status == Status.ENABLED) {
@@ -136,18 +135,16 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (player == null) {
             throw new PlayerNotFoundException();
         }
-
         SportEvent sportEvent = getSportEvent(eventId);
         if (sportEvent == null) {
             throw new SportEventNotFoundException();
         }
-
         player.addEvent(sportEvent);
-        if (!sportEvent.isFull()) {
+        if (!sportEvent.isLimitOfAttenders()) {
             sportEvent.addPlayer(player);
-        }
-        else {
+        } else {
             sportEvent.addSubstitute(player);
+            System.out.println("player: " + player.getName() + ", " + player.getSurname());
             throw new LimitExceededException();
         }
         updateMostActivePlayer(player);
@@ -239,18 +236,18 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public Player mostActivePlayer() throws PlayerNotFoundException {
-        if (mostActivePlayer == null) {
+        if (this.mostActivePlayer == null) {
             throw new PlayerNotFoundException();
         }
-        return mostActivePlayer;
+        return this.mostActivePlayer;
     }
 
     @Override
     public SportEvent bestSportEvent() throws SportEventNotFoundException {
-        if (bestSportEvents.size() == 0) {
+        if (this.bestSportEvents.size() == 0) {
             throw new SportEventNotFoundException();
         }
-        return bestSportEvents.elementAt(0);
+        return this.bestSportEvents.elementAt(0);
     }
 
     @Override
@@ -371,6 +368,9 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             throw new LimitExceededException();
         }
         sportEvent.addAttender(new Attender(phone, name, eventId));
+        // Update ordered vectors
+        //this.bestOrganizationEntities.update(sportEvent.getOrganizingEntity());
+        this.bestSportEvents.update(sportEvent);
     }
 
     @Override
@@ -400,7 +400,14 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public Iterator<OrganizingEntity> best5OrganizingEntities() throws NoAttendersException {
-        return null;
+        if (this.bestOrganizationEntities.isEmpty()) {
+            throw new NoAttendersException();
+        }
+        for (Iterator<OrganizingEntity> it = this.bestOrganizationEntities.values(); it.hasNext();) {
+            OrganizingEntity og = it.next();
+            System.out.println("Org: " + og.getOrganizationId() + " -> Attenders: " + og.numAttenders());
+        }
+        return this.bestOrganizationEntities.values();
     }
 
     @Override
@@ -408,7 +415,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (this.bestSportEvents.isEmpty()) {
             throw new NoSportEventsException();
         }
-        return null;
+        return this.bestSportEvents.last();
     }
 
     @Override
@@ -479,7 +486,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
     public int numPlayersBySportEvent(String sportEventId) {
         SportEvent sportEvent = getSportEvent(sportEventId);
         if (sportEvent != null) {
-            return sportEvent.numPlayers();
+            return sportEvent.numPlayers() + sportEvent.numSubstitutes();
         }
         return 0;
     }
