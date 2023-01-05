@@ -88,17 +88,6 @@ public class Player {
         return events.size();
     }
 
-    public boolean isInSportEvent(String eventId) {
-        boolean found = false;
-        SportEvent sportEvent = null;
-        Iterator<SportEvent> it = getEvents();
-        while (it.hasNext() && !found) {
-            sportEvent = it.next();
-            found = sportEvent.is(eventId);
-        }
-        return found;
-    }
-
     public int numSportEvents() {
         return events.size();
     }

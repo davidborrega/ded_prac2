@@ -30,13 +30,12 @@ public class SportEvent {
     private File file;
 
     private List<Rating> ratings;
-    private double sumRating;
 
     private int numSubstitutes;
 
-    private Queue<Enrollment> enrollments;
+    private Queue<Enrollment> players;
 
-    private PriorityQueue<Enrollment> substituteEnrollments;
+    private PriorityQueue<Enrollment> substitutes;
 
     private List<Worker> workers;
 
@@ -53,10 +52,10 @@ public class SportEvent {
         this.setType(type);
         this.setMax(max);
         this.setFile(file);
-        this.enrollments = new QueueArrayImpl<>(MAX_NUM_ENROLLMENT);
-        this.substituteEnrollments = new PriorityQueue<Enrollment>();
+        this.players = new QueueArrayImpl<>(MAX_NUM_ENROLLMENT);
+        this.substitutes = new PriorityQueue<Enrollment>();
         this.ratings = new LinkedList<Rating>();
-        numSubstitutes = 0;
+        this.numSubstitutes = 0;
         this.workers = new LinkedList<Worker>();
         this.attenders = new HashTable<String, Attender>();
         this.organizingEntity = null;
@@ -142,42 +141,29 @@ public class SportEvent {
         return (double) rating / (double) numberOfRatings;
     }
 
-    public void addEnrollment(Player player) {
-        addEnrollment(player, false);
+    public void addPlayer(Player player) {
+        this.addEnrollment(player, false);
+    }
+
+    public void addSubstitute(Player player) {
+        this.addEnrollment(player, true);
+        this.numSubstitutes++;
     }
 
     public void addEnrollment(Player player, boolean isSubstitute) {
-        enrollments.add(new Enrollment(player, isSubstitute));
-    }
-
-    public boolean is(String eventId) {
-        return this.eventId.equals(eventId);
-    }
-
-    //@Override
-    public int compareTo(SportEvent se2) {
-        return Double.compare(rating(), se2.rating() );
+        this.players.add(new Enrollment(player, isSubstitute));
     }
 
     public boolean isFull() {
-        return (enrollments.size()>=max);
+        return (players.size() >= max);
     }
 
     public int numPlayers() {
-        return enrollments.size();
-    }
-
-    public void incSubstitutes() {
-        numSubstitutes++;
-    }
-
-    public void addEnrollmentAsSubstitute(Player player) {
-        addEnrollment(player, true);
-        incSubstitutes();
+        return players.size();
     }
 
     public int getNumSubstitutes() {
-        return numSubstitutes;
+        return this.numSubstitutes;
     }
 
     public void setOrganizingEntity(OrganizingEntity organizingEntity) {
@@ -205,7 +191,7 @@ public class SportEvent {
     }
 
     public boolean isLimitOfAttenders() {
-        return (this.numAttenders() >= this.getMax());
+        return ((this.numAttenders() + this.numPlayers()) >= this.getMax());
     }
 
     public Iterator<Worker> getWorkers() {

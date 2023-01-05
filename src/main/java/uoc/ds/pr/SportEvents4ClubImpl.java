@@ -144,10 +144,10 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
         player.addEvent(sportEvent);
         if (!sportEvent.isFull()) {
-            sportEvent.addEnrollment(player);
+            sportEvent.addPlayer(player);
         }
         else {
-            sportEvent.addEnrollmentAsSubstitute(player);
+            sportEvent.addSubstitute(player);
             throw new LimitExceededException();
         }
         updateMostActivePlayer(player);
@@ -357,12 +357,11 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (sportEvent == null) {
             throw new SportEventNotFoundException();
         }
-        System.out.println("Add attender: " + sportEvent.getEventId() + "- Max: " + sportEvent.getMax());
-        if (sportEvent.isLimitOfAttenders()) {
-            throw new LimitExceededException();
-        }
         if (sportEvent.getAttender(phone) != null) {
             throw new AttenderAlreadyExistsException();
+        }
+        if (sportEvent.isLimitOfAttenders()) {
+            throw new LimitExceededException();
         }
         sportEvent.addAttender(new Attender(phone, name, eventId));
     }
