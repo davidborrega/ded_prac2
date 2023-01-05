@@ -402,10 +402,6 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (this.bestOrganizationEntities.isEmpty()) {
             throw new NoAttendersException();
         }
-        for (Iterator<OrganizingEntity> it = this.bestOrganizationEntities.values(); it.hasNext();) {
-            OrganizingEntity og = it.next();
-            System.out.println("Org: " + og.getOrganizationId() + " -> Attenders: " + og.numAttenders());
-        }
         return this.bestOrganizationEntities.values();
     }
 

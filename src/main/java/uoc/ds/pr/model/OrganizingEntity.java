@@ -14,7 +14,7 @@ public class OrganizingEntity implements Comparable<OrganizingEntity> {
     private List<SportEvent> sportEvents;
 
     public static final Comparator<OrganizingEntity> CMP_MOST_ATTENDERS = (OrganizingEntity o1, OrganizingEntity o2) -> {
-        return Integer.compare(o2.numAttenders(), o1.numAttenders());
+        return Integer.compare(o1.numAttenders(), o2.numAttenders());
     };
 
     public OrganizingEntity(String organizationId, String name, String description) {
@@ -69,8 +69,8 @@ public class OrganizingEntity implements Comparable<OrganizingEntity> {
     }
 
     @Override
-    public int compareTo(OrganizingEntity o2) {
-        return Integer.compare(numAttenders(), o2.numAttenders());
+    public int compareTo(OrganizingEntity o) {
+        return getOrganizationId().compareTo(o.getOrganizationId());
     }
 
 }
