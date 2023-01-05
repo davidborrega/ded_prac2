@@ -55,4 +55,8 @@ public class Role {
         return this.workers.size();
     }
 
+    public Iterator<Worker> getWorkers() {
+        return this.workers.values();
+    }
+
 }

@@ -84,8 +84,8 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             organizingEntity.setDescription(description);
         } else {
             organizingEntity = new OrganizingEntity(id, name, description);
-            organizingEntities.put(id, organizingEntity);
-            numOrganizingEntities++;
+            this.organizingEntities.put(id, organizingEntity);
+            this.numOrganizingEntities++;
         }
     }
 
@@ -114,12 +114,15 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             file.setEndDate(date);
             // Add new event into sport events.
             SportEvent sportEvent = file.newSportEvent();
+            // Add new event into linked list of organizing entity.
+            OrganizingEntity organizingEntity = this.getOrganizingEntity(file.getOrgId());
+            if (organizingEntity != null) {
+                sportEvent.setOrganizingEntity(organizingEntity);
+                organizingEntity.addEvent(sportEvent);
+            }
             this.sportEvents.put(file.getEventId(), sportEvent);
             // Add new event into best sport events vector.
-            //this.bestSportEvents.add(sportEvent);
             this.bestSportEvents.update(sportEvent);
-            // Add new event into linked list of organizing entity.
-            this.getOrganizingEntity(file.getOrgId()).addEvent(sportEvent);
         } else if (status == Status.DISABLED) {
             // Increase the number of rejected files and no save data.
             this.rejectedFiles++;
@@ -217,6 +220,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         sportEvent.addRating(newRating);
         // Reorder best sport events vector.
         this.bestSportEvents.update(sportEvent);
+        player.increaseNumRatings();
     }
 
     @Override
@@ -262,11 +266,12 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public void addWorker(String dni, String name, String surname, LocalDate birthDay, String roleId) {
-        Worker worker = getWorker(dni);
+        Worker worker = this.getWorker(dni);
         if (worker == null) {
             Worker newWorker = new Worker(dni, name, surname, birthDay, roleId);
             this.workers.put(dni, newWorker);
             this.addWorkerIntoRole(roleId, newWorker);
+            this.numWorkers++;
         } else {
             // Set worker variables.
             worker.setName(name);
@@ -294,17 +299,42 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public void assignWorker(String dni, String eventId) throws WorkerNotFoundException, WorkerAlreadyAssignedException, SportEventNotFoundException {
-
+        SportEvent sportEvent = getSportEvent(eventId);
+        if (sportEvent == null) {
+            throw new SportEventNotFoundException();
+        }
+        Worker worker = getWorker(dni);
+        if (worker == null) {
+            throw new WorkerNotFoundException();
+        }
+        if (sportEvent.getWorker(dni) != null) {
+            throw new WorkerAlreadyAssignedException();
+        }
+        sportEvent.addWorker(worker);
     }
 
     @Override
     public Iterator<Worker> getWorkersBySportEvent(String eventId) throws SportEventNotFoundException, NoWorkersException {
-        return null;
+        SportEvent sportEvent = getSportEvent(eventId);
+        if (sportEvent == null) {
+            throw new SportEventNotFoundException();
+        }
+        if (sportEvent.numWorkers() == 0) {
+            throw new NoWorkersException();
+        }
+        return sportEvent.getWorkers();
     }
 
     @Override
     public Iterator<Worker> getWorkersByRole(String roleId) throws NoWorkersException {
-        return null;
+        Role role = getRole(roleId);
+        if (role == null) {
+            return null;
+        }
+        if (role.numWorkers() == 0) {
+            throw new NoWorkersException();
+        }
+        return role.getWorkers();
     }
 
     @Override
@@ -327,6 +357,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (sportEvent == null) {
             throw new SportEventNotFoundException();
         }
+        System.out.println("Add attender: " + sportEvent.getEventId() + "- Max: " + sportEvent.getMax());
         if (sportEvent.isLimitOfAttenders()) {
             throw new LimitExceededException();
         }
@@ -513,6 +544,9 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public Worker getWorker(String dni) {
+        if (this.workers.isEmpty()) {
+            return null;
+        }
         return this.workers.get(dni);
     }
 
@@ -527,12 +561,20 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public int numWorkersBySportEvent(String sportEventId) {
-        return 0;
+        SportEvent sportEvent = getSportEvent(sportEventId);
+        if (sportEvent == null) {
+            return 0;
+        }
+        return sportEvent.numWorkers();
     }
 
     @Override
     public int numRatings(String playerId) {
-        return 0;
+        Player player = getPlayer(playerId);
+        if (player == null) {
+            return 0;
+        }
+        return player.getNumRatings();
     }
 
     @Override

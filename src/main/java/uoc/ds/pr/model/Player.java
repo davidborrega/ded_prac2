@@ -120,4 +120,12 @@ public class Player {
         return false;
     }
 
+    public int getNumRatings() {
+        return this.numRatings;
+    }
+
+    public void increaseNumRatings() {
+        this.numRatings++;
+    }
+
 }

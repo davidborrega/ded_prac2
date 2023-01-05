@@ -9,13 +9,13 @@ public class OrganizingEntity {
     private String organizationId;
     private String description;
     private String name;
-    private List<SportEvent> events;
+    private List<SportEvent> sportEvents;
 
     public OrganizingEntity(String organizationId, String name, String description) {
         this.organizationId = organizationId;
         this.name = name;
         this.description = description;
-        events = new LinkedList<>();
+        this.sportEvents = new LinkedList<SportEvent>();
     }
 
     public String getName() {
@@ -42,28 +42,24 @@ public class OrganizingEntity {
         this.name = name;
     }
 
-    public Iterator<SportEvent> activities() {
-        return events.values();
-    }
-
     public void addEvent(SportEvent sportEvent) {
-        events.insertEnd(sportEvent);
+        this.sportEvents.insertEnd(sportEvent);
     }
 
     public int numEvents() {
-        return events.size();
-    }
-
-    public boolean hasActivities() {
-        return events.size() > 0;
+        return this.sportEvents.size();
     }
 
     public Iterator<SportEvent> sportEvents() {
-        return events.values();
+        return this.sportEvents.values();
     }
 
     public int numAttenders() {
-        return 1; // TODO
+        int numAttenders = 0;
+        for (Iterator<SportEvent> it = this.sportEvents(); it.hasNext();) {
+            numAttenders += it.next().numAttenders();
+        }
+        return numAttenders;
     }
 
 }

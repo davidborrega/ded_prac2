@@ -42,21 +42,24 @@ public class SportEvent {
 
     private HashTable<String, Attender> attenders;
 
+    private OrganizingEntity organizingEntity;
+
     public SportEvent(String eventId, String description, SportEvents4Club.Type type,
                       LocalDate startDate, LocalDate endDate, int max, File file) {
-        setEventId(eventId);
-        setDescription(description);
-        setStartDate(startDate);
-        setEndDate(endDate);
-        setType(type);
-        setMax(max);
-        setFile(file);
+        this.setEventId(eventId);
+        this.setDescription(description);
+        this.setStartDate(startDate);
+        this.setEndDate(endDate);
+        this.setType(type);
+        this.setMax(max);
+        this.setFile(file);
         this.enrollments = new QueueArrayImpl<>(MAX_NUM_ENROLLMENT);
         this.substituteEnrollments = new PriorityQueue<Enrollment>();
         this.ratings = new LinkedList<Rating>();
         numSubstitutes = 0;
         this.workers = new LinkedList<Worker>();
         this.attenders = new HashTable<String, Attender>();
+        this.organizingEntity = null;
     }
 
     public String getEventId() {
@@ -177,8 +180,12 @@ public class SportEvent {
         return numSubstitutes;
     }
 
+    public void setOrganizingEntity(OrganizingEntity organizingEntity) {
+        this.organizingEntity = organizingEntity;
+    }
+
     public OrganizingEntity getOrganizingEntity() {
-        return new OrganizingEntity("1", "a", "a");
+        return this.organizingEntity;
     }
 
     public void addAttender(Attender attender) {
@@ -199,6 +206,31 @@ public class SportEvent {
 
     public boolean isLimitOfAttenders() {
         return (this.numAttenders() >= this.getMax());
+    }
+
+    public Iterator<Worker> getWorkers() {
+        return this.workers.values();
+    }
+
+    public Worker getWorker(String dni) {
+        if (this.numWorkers() == 0) {
+            return null;
+        }
+        for (Iterator<Worker> it = this.getWorkers(); it.hasNext();) {
+            Worker worker = it.next();
+            if (worker.getDni().equals(dni)) {
+                return worker;
+            }
+        }
+        return null;
+    }
+
+    public void addWorker(Worker worker) {
+        this.workers.insertEnd(worker);
+    }
+
+    public int numWorkers() {
+        return this.workers.size();
     }
 
 }

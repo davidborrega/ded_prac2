@@ -18,7 +18,7 @@ public class Worker {
         this.setRoleId(roleId);
     }
 
-    public void setDni(String ddni) {
+    public void setDni(String dni) {
         this.dni = dni;
     }
 
