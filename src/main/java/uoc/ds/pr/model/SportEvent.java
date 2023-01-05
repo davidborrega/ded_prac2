@@ -14,7 +14,7 @@ import java.util.Comparator;
 
 import static uoc.ds.pr.SportEvents4Club.MAX_NUM_ENROLLMENT;
 
-public class SportEvent {
+public class SportEvent implements Comparable<SportEvent> {
 
     public static final Comparator<SportEvent> CMP_V = (se1, se2)-> Double.compare(se1.rating(), se2.rating());
 
@@ -135,6 +135,11 @@ public class SportEvent {
             rating += it.next().rating().getValue();
         }
         return (double) rating / (double) numberOfRatings;
+    }
+
+    @Override
+    public int compareTo(SportEvent se2) {
+        return Double.compare(rating(), se2.rating() );
     }
 
     public void addPlayer(Player player) {
