@@ -142,7 +142,6 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             sportEvent.addPlayer(player);
         } else {
             sportEvent.addSubstitute(player);
-            System.out.println("player: " + player.getName() + ", " + player.getSurname());
             throw new LimitExceededException();
         }
         updateMostActivePlayer(player);
@@ -415,12 +414,29 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public void addFollower(String playerId, String playerFollowerId) throws PlayerNotFoundException {
-
+        Player playerToFollow = getPlayer(playerId);
+        if (playerToFollow == null) {
+            throw new PlayerNotFoundException();
+        }
+        Player follower = getPlayer(playerFollowerId);
+        if (follower == null) {
+            throw new PlayerNotFoundException();
+        }
+        if (playerId != playerFollowerId) {
+            playerToFollow.addFollower(follower);
+        }
     }
 
     @Override
     public Iterator<Player> getFollowers(String playerId) throws PlayerNotFoundException, NoFollowersException {
-        return null;
+        Player player = getPlayer(playerId);
+        if (player == null) {
+            throw new PlayerNotFoundException();
+        }
+        if (player.numFollowers() == 0) {
+            throw new NoFollowersException();
+        }
+        return player.getFollowers();
     }
 
     @Override
@@ -599,11 +615,19 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public int numFollowers(String playerId) {
-        return 0;
+        Player player = getPlayer(playerId);
+        if (player == null) {
+            return 0;
+        }
+        return player.numFollowers();
     }
 
     @Override
     public int numFollowings(String playerId) {
+        Player player = getPlayer(playerId);
+        if (player == null) {
+            return 0;
+        }
         return 0;
     }
 }
