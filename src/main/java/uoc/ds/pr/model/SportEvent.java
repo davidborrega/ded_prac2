@@ -31,11 +31,10 @@ public class SportEvent {
 
     private List<Rating> ratings;
 
-    private int numSubstitutes;
-
     private Queue<Enrollment> players;
 
     private PriorityQueue<Enrollment> substitutes;
+    private int numSubstitutes;
 
     private List<Worker> workers;
 
@@ -53,7 +52,7 @@ public class SportEvent {
         this.setMax(max);
         this.setFile(file);
         this.players = new QueueArrayImpl<>(MAX_NUM_ENROLLMENT);
-        this.substitutes = new PriorityQueue<Enrollment>();
+        this.substitutes = new PriorityQueue<Enrollment>(Enrollment.CMP_PLAYER);
         this.ratings = new LinkedList<Rating>();
         this.numSubstitutes = 0;
         this.workers = new LinkedList<Worker>();
@@ -162,8 +161,12 @@ public class SportEvent {
         return players.size();
     }
 
-    public int getNumSubstitutes() {
+    public int numSubstitutes() {
         return this.numSubstitutes;
+    }
+
+    public Iterator<Enrollment> getSubstitutes() {
+        return this.substitutes.values();
     }
 
     public void setOrganizingEntity(OrganizingEntity organizingEntity) {

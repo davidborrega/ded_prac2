@@ -348,7 +348,14 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public Iterator<Enrollment> getSubstitutes(String eventId) throws SportEventNotFoundException, NoSubstitutesException {
-        return null;
+        SportEvent sportEvent = getSportEvent(eventId);
+        if (sportEvent == null) {
+            throw new SportEventNotFoundException();
+        }
+        if (sportEvent.numSubstitutes() == 0) {
+            throw new NoSubstitutesException();
+        }
+        return sportEvent.getSubstitutes();
     }
 
     @Override
@@ -398,6 +405,9 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public SportEvent bestSportEventByAttenders() throws NoSportEventsException {
+        if (this.bestSportEvents.isEmpty()) {
+            throw new NoSportEventsException();
+        }
         return null;
     }
 
@@ -487,7 +497,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
     public int numSubstitutesBySportEvent(String sportEventId) {
         SportEvent sportEvent = getSportEvent(sportEventId);
         if (sportEvent != null) {
-            return sportEvent.getNumSubstitutes();
+            return sportEvent.numSubstitutes();
         }
         return 0;
     }

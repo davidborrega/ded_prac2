@@ -1,10 +1,16 @@
 package uoc.ds.pr.model;
 
+import java.util.Comparator;
+
 public class Enrollment {
 
-    Player player;
+    private Player player;
 
-    boolean isSubtitute;
+    private boolean isSubtitute;
+
+    public static Comparator<Enrollment> CMP_PLAYER = (Enrollment p1, Enrollment p2) -> {
+        return p1.getPlayer().getLevel().compareTo(p2.getPlayer().getLevel());
+    };
 
     public Enrollment(Player player, boolean isSubstitute) {
         this.setPlayer(player);
