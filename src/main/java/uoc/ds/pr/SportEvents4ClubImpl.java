@@ -369,6 +369,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         }
         sportEvent.addAttender(new Attender(phone, name, eventId));
         // Update ordered vectors
+        this.bestOrganizationEntities.delete(sportEvent.getOrganizingEntity());
         this.bestOrganizationEntities.update(sportEvent.getOrganizingEntity());
         this.bestSportEvents.update(sportEvent);
     }

@@ -6,7 +6,7 @@ import edu.uoc.ds.traversal.Iterator;
 
 import java.util.Comparator;
 
-public class OrganizingEntity {
+public class OrganizingEntity implements Comparable<OrganizingEntity> {
 
     private String organizationId;
     private String description;
@@ -66,6 +66,11 @@ public class OrganizingEntity {
             numAttenders += it.next().numAttenders();
         }
         return numAttenders;
+    }
+
+    @Override
+    public int compareTo(OrganizingEntity o2) {
+        return Integer.compare(numAttenders(), o2.numAttenders());
     }
 
 }
