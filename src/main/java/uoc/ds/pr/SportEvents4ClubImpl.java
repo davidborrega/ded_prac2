@@ -85,8 +85,8 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             organizingEntity = new OrganizingEntity(id, name, description);
             this.organizingEntities.put(id, organizingEntity);
             this.numOrganizingEntities++;
+            //this.bestOrganizationEntities.update(organizingEntity);
         }
-        this.bestOrganizationEntities.update(organizingEntity);
     }
 
     @Override
@@ -369,7 +369,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         }
         sportEvent.addAttender(new Attender(phone, name, eventId));
         // Update ordered vectors
-        //this.bestOrganizationEntities.update(sportEvent.getOrganizingEntity());
+        this.bestOrganizationEntities.update(sportEvent.getOrganizingEntity());
         this.bestSportEvents.update(sportEvent);
     }
 
