@@ -1,7 +1,5 @@
 package uoc.ds.pr.model;
 
-import edu.uoc.ds.adt.nonlinear.graphs.DirectedGraphImpl;
-import edu.uoc.ds.adt.nonlinear.graphs.Vertex;
 import edu.uoc.ds.adt.sequential.LinkedList;
 import edu.uoc.ds.adt.sequential.List;
 import edu.uoc.ds.traversal.Iterator;
@@ -26,9 +24,6 @@ public class Player {
 
     private int numRatings;
 
-    private DirectedGraphImpl<Player, Player> graphFollowers;
-    private Vertex<Player> followed;
-
     public Player(String idUser, String name, String surname, LocalDate birthday) {
         this.setId(idUser);
         this.setName(name);
@@ -36,8 +31,6 @@ public class Player {
         this.setBirthday(birthday);
         this.events = new LinkedList<>();
         this.setNumRatings(0);
-        this.graphFollowers = new DirectedGraphImpl<Player, Player>();
-        this.followed = this.graphFollowers.newVertex(this);
     }
 
     public void setName(String name) {
@@ -125,20 +118,4 @@ public class Player {
         this.numRatings++;
     }
 
-    public Vertex<Player> getFollowed() {
-        return this.followed;
-    }
-
-    public void addFollower(Player follower) {
-        Vertex<Player> newFollower = this.graphFollowers.newVertex(follower);
-        this.graphFollowers.newEdge(this.getFollowed(), newFollower);
-    }
-
-    public Iterator<Player> getFollowers() {
-        return null;
-    }
-
-    public int numFollowers() {
-        return this.graphFollowers.numVertexs() - 1;
-    }
 }

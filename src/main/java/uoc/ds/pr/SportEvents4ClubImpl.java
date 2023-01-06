@@ -3,6 +3,10 @@ package uoc.ds.pr;
 import edu.uoc.ds.adt.nonlinear.DictionaryAVLImpl;
 import edu.uoc.ds.adt.nonlinear.HashTable;
 import edu.uoc.ds.adt.nonlinear.PriorityQueue;
+import edu.uoc.ds.adt.nonlinear.graphs.DirectedGraphImpl;
+import edu.uoc.ds.adt.nonlinear.graphs.DirectedVertexImpl;
+import edu.uoc.ds.adt.nonlinear.graphs.Edge;
+import edu.uoc.ds.adt.nonlinear.graphs.Vertex;
 import edu.uoc.ds.traversal.Iterator;
 import uoc.ds.pr.exceptions.*;
 import uoc.ds.pr.model.*;
@@ -32,6 +36,9 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
     private Role[] roles;
     private int numRoles;
 
+    // Social network
+    private DirectedGraphImpl<Player, Player> socialNetwork;
+
     public SportEvents4ClubImpl() {
         // Players
         this.players = new DictionaryAVLImpl<String, Player>();
@@ -59,6 +66,9 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         // Workers
         this.workers = new HashTable<String, Worker>();
         this.numWorkers = 0;
+
+        // Social network
+        this.socialNetwork = new DirectedGraphImpl<>();
     }
 
     @Override
@@ -72,6 +82,8 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             player = new Player(id, name, surname, dateOfBirth);
             players.put(id, player);
             numPlayers++;
+            // Social network, create new vertex
+            socialNetwork.newVertex(player);
         }
     }
 
@@ -423,7 +435,8 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             throw new PlayerNotFoundException();
         }
         if (playerId != playerFollowerId) {
-            playerToFollow.addFollower(follower);
+            socialNetwork.newEdge(socialNetwork.getVertex(playerToFollow),
+                    socialNetwork.getVertex(follower));
         }
     }
 
@@ -433,10 +446,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (player == null) {
             throw new PlayerNotFoundException();
         }
-        if (player.numFollowers() == 0) {
-            throw new NoFollowersException();
-        }
-        return player.getFollowers();
+        return null;
     }
 
     @Override
@@ -619,7 +629,9 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (player == null) {
             return 0;
         }
-        return player.numFollowers();
+        DirectedVertexImpl<Player, Player> mainPlayer = (DirectedVertexImpl<Player, Player>) socialNetwork.getVertex(player);
+        //mainPlayer.edges();
+        return 0;
     }
 
     @Override
