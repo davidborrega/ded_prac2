@@ -491,31 +491,31 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             throw new NoFollowersException();
         }
         List<Player> recommendations = new LinkedList<>();
+        ArrayList<String> newRecommendations = new ArrayList<>();
 
         // Get followers by player
         Iterator<Player> followers = this.getFollowers(playerId);
         ArrayList<String> playerIds = new ArrayList<>();
 
-        System.out.println("Main followers");
         // First loop to make a new array list to will compare.
         for (Iterator<Player> it = followers; it.hasNext();) {
             Player currentPlayer = it.next();
             playerIds.add(currentPlayer.getId());
-            System.out.println(currentPlayer.getId());
         }
-        System.out.println("Total: " + playerIds.size());
 
+        // Iterate each follower to find recommendations never used previously
         for (Iterator<Player> it = this.getFollowers(playerId); it.hasNext();) {
             Player currentPlayer = it.next();
             if (this.numFollowers(currentPlayer.getId()) > 0) {
-                System.out.println("Main follower: " + currentPlayer.getId());
                 for (Iterator<Player> followersByCurrentFollower = this.getFollowers(currentPlayer.getId()); followersByCurrentFollower.hasNext();) {
                     // Check follower is inside of list
                     Player currentFollowerByFollower = followersByCurrentFollower.next();
-                    System.out.println("currentFollowerByFollower: " + currentFollowerByFollower.getId());
-                    if (!playerIds.contains(currentFollowerByFollower.getId()) && currentFollowerByFollower.getId() != playerId) {
-                        System.out.println("Not contains: " + currentFollowerByFollower.getId());
+                    if (!playerIds.contains(currentFollowerByFollower.getId())
+                            && currentFollowerByFollower.getId() != playerId
+                            && !newRecommendations.contains(currentFollowerByFollower.getId())) {
+                        // Add recomendation into linked list
                         recommendations.insertEnd(currentFollowerByFollower);
+                        newRecommendations.add(currentFollowerByFollower.getId());
                     }
                 }
             }
@@ -525,6 +525,16 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public Iterator<Post> getPosts(String playerId) throws PlayerNotFoundException, NoPostsException {
+        Player player = getPlayer(playerId);
+        if (player == null) {
+            throw new PlayerNotFoundException();
+        }
+
+        //Iterator<Player> followings = this.getFollowings(playerId);
+
+        // Recorrer followings
+
+
         return null;
     }
 
