@@ -3,16 +3,16 @@ package uoc.ds.pr;
 import edu.uoc.ds.adt.nonlinear.DictionaryAVLImpl;
 import edu.uoc.ds.adt.nonlinear.HashTable;
 import edu.uoc.ds.adt.nonlinear.PriorityQueue;
-import edu.uoc.ds.adt.nonlinear.graphs.DirectedGraphImpl;
-import edu.uoc.ds.adt.nonlinear.graphs.DirectedVertexImpl;
-import edu.uoc.ds.adt.nonlinear.graphs.Edge;
-import edu.uoc.ds.adt.nonlinear.graphs.Vertex;
+import edu.uoc.ds.adt.nonlinear.graphs.*;
+import edu.uoc.ds.adt.sequential.LinkedList;
+import edu.uoc.ds.adt.sequential.List;
 import edu.uoc.ds.traversal.Iterator;
 import uoc.ds.pr.exceptions.*;
 import uoc.ds.pr.model.*;
 import uoc.ds.pr.util.OrderedVector;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class SportEvents4ClubImpl implements SportEvents4Club {
 
@@ -37,7 +37,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
     private int numRoles;
 
     // Social network
-    private DirectedGraphImpl<Player, Player> socialNetwork;
+    private DirectedGraphImpl<Player, String> socialNetwork;
 
     public SportEvents4ClubImpl() {
         // Players
@@ -435,28 +435,86 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             throw new PlayerNotFoundException();
         }
         if (playerId != playerFollowerId) {
-            socialNetwork.newEdge(socialNetwork.getVertex(playerToFollow),
-                    socialNetwork.getVertex(follower));
+            //System.out.println("Followed: " + playerToFollow.getId());
+            //System.out.println("Follower: " + follower.getId());
+            // Add Follower
+            Edge<String, Player> edge1 = socialNetwork.newEdge(socialNetwork.getVertex(playerToFollow), socialNetwork.getVertex(follower));
+            edge1.setLabel("Follower");
+            // Add Following
+            Edge<String, Player> edge2 = socialNetwork.newEdge(socialNetwork.getVertex(follower), socialNetwork.getVertex(playerToFollow));
+            edge2.setLabel("Followed");
         }
     }
 
     @Override
     public Iterator<Player> getFollowers(String playerId) throws PlayerNotFoundException, NoFollowersException {
-        Player player = getPlayer(playerId);
-        if (player == null) {
-            throw new PlayerNotFoundException();
+        List<Player> followers = this.getFollowByType(playerId, "Follower");
+        if (followers.isEmpty()) {
+            throw new NoFollowersException();
         }
-        return null;
+        return followers.values();
+
     }
 
     @Override
     public Iterator<Player> getFollowings(String playerId) throws PlayerNotFoundException, NoFollowingException {
-        return null;
+        List<Player> following = this.getFollowByType(playerId, "Followed");
+        if (following.isEmpty()) {
+            throw new NoFollowingException();
+        }
+        return following.values();
+    }
+
+    private List<Player> getFollowByType(String playerId, String type) throws PlayerNotFoundException {
+        Player player = getPlayer(playerId);
+        if (player == null) {
+            throw new PlayerNotFoundException();
+        }
+        DirectedVertexImpl<Player, String> mainPlayer = (DirectedVertexImpl<Player, String>) socialNetwork.getVertex(player);
+        List<Player> followers = new LinkedList<>();
+        for (Iterator<Edge<String, Player>> edges = mainPlayer.edges(); edges.hasNext();) {
+            DirectedEdge<String, Player> currentEdge = (DirectedEdge<String, Player>) edges.next();
+            if (currentEdge.getLabel() == type && currentEdge.getVertexSrc().getValue().getId() == playerId) {
+                followers.insertEnd(currentEdge.getVertexDst().getValue());
+            }
+        }
+        return followers;
     }
 
     @Override
     public Iterator<Player> recommendations(String playerId) throws PlayerNotFoundException, NoFollowersException {
-        return null;
+        Player player = getPlayer(playerId);
+        if (player == null) {
+            throw new PlayerNotFoundException();
+        }
+        if (this.numFollowers(playerId) == 0) {
+            throw new NoFollowersException();
+        }
+        DirectedVertexImpl<Player, String> mainPlayer = (DirectedVertexImpl<Player, String>) socialNetwork.getVertex(player);
+        List<Player> recommendations = new LinkedList<>();
+
+        // Get followers by player
+        Iterator<Player> followers = this.getFollowers(playerId);
+        ArrayList<String> playerIds = new ArrayList<>();
+
+        // First loop to make a new array list to will compare.
+        for (Iterator<Player> it = this.getFollowers(playerId); it.hasNext();) {
+            playerIds.add(it.next().getId());
+        }
+
+        for (Iterator<Player> it = this.getFollowers(playerId); it.hasNext();) {
+            Player currentPlayer = it.next();
+            if (this.numFollowers(currentPlayer.getId()) != 0) {
+                for (Iterator<Player> followersByCurrentFollower = this.getFollowers(currentPlayer.getId()); followersByCurrentFollower.hasNext();) {
+                    // Check follower is inside of list
+                    Player currentFollowerByFollower = followersByCurrentFollower.next();
+                    if (playerIds.contains(currentFollowerByFollower.getId())) {
+                        recommendations.insertEnd(currentFollowerByFollower);
+                    }
+                }
+            }
+        }
+        return recommendations.values();
     }
 
     @Override
@@ -625,21 +683,28 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
 
     @Override
     public int numFollowers(String playerId) {
-        Player player = getPlayer(playerId);
-        if (player == null) {
-            return 0;
-        }
-        DirectedVertexImpl<Player, Player> mainPlayer = (DirectedVertexImpl<Player, Player>) socialNetwork.getVertex(player);
-        //mainPlayer.edges();
-        return 0;
+        return numFollowByType(playerId, "Follower");
     }
 
     @Override
     public int numFollowings(String playerId) {
+        return numFollowByType(playerId, "Followed");
+    }
+
+    private int numFollowByType(String playerId, String type) {
         Player player = getPlayer(playerId);
         if (player == null) {
             return 0;
         }
-        return 0;
+        int cont = 0;
+        DirectedVertexImpl<Player, String> mainPlayer = (DirectedVertexImpl<Player, String>) socialNetwork.getVertex(player);
+        for (Iterator<Edge<String, Player>> edges = mainPlayer.edges(); edges.hasNext();) {
+            DirectedEdge<String, Player> currentEdge = (DirectedEdge<String, Player>) edges.next();
+            if (currentEdge.getLabel() == type && currentEdge.getVertexSrc().getValue().getId() == playerId) {
+                cont++;
+            }
+        }
+        return cont;
     }
+
 }
