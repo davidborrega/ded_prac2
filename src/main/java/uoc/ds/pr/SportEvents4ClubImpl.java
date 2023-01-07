@@ -490,25 +490,31 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (this.numFollowers(playerId) == 0) {
             throw new NoFollowersException();
         }
-        DirectedVertexImpl<Player, String> mainPlayer = (DirectedVertexImpl<Player, String>) socialNetwork.getVertex(player);
         List<Player> recommendations = new LinkedList<>();
 
         // Get followers by player
         Iterator<Player> followers = this.getFollowers(playerId);
         ArrayList<String> playerIds = new ArrayList<>();
 
+        System.out.println("Main followers");
         // First loop to make a new array list to will compare.
-        for (Iterator<Player> it = this.getFollowers(playerId); it.hasNext();) {
-            playerIds.add(it.next().getId());
+        for (Iterator<Player> it = followers; it.hasNext();) {
+            Player currentPlayer = it.next();
+            playerIds.add(currentPlayer.getId());
+            System.out.println(currentPlayer.getId());
         }
+        System.out.println("Total: " + playerIds.size());
 
         for (Iterator<Player> it = this.getFollowers(playerId); it.hasNext();) {
             Player currentPlayer = it.next();
-            if (this.numFollowers(currentPlayer.getId()) != 0) {
+            if (this.numFollowers(currentPlayer.getId()) > 0) {
+                System.out.println("Main follower: " + currentPlayer.getId());
                 for (Iterator<Player> followersByCurrentFollower = this.getFollowers(currentPlayer.getId()); followersByCurrentFollower.hasNext();) {
                     // Check follower is inside of list
                     Player currentFollowerByFollower = followersByCurrentFollower.next();
-                    if (playerIds.contains(currentFollowerByFollower.getId())) {
+                    System.out.println("currentFollowerByFollower: " + currentFollowerByFollower.getId());
+                    if (!playerIds.contains(currentFollowerByFollower.getId()) && currentFollowerByFollower.getId() != playerId) {
+                        System.out.println("Not contains: " + currentFollowerByFollower.getId());
                         recommendations.insertEnd(currentFollowerByFollower);
                     }
                 }
