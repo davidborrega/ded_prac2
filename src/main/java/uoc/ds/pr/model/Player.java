@@ -24,6 +24,8 @@ public class Player {
 
     private int numRatings;
 
+    private LinkedList<Rating> ratings;
+
     public Player(String idUser, String name, String surname, LocalDate birthday) {
         this.setId(idUser);
         this.setName(name);
@@ -31,6 +33,7 @@ public class Player {
         this.setBirthday(birthday);
         this.events = new LinkedList<>();
         this.setNumRatings(0);
+        this.ratings = new LinkedList<>();
     }
 
     public void setName(String name) {
@@ -116,6 +119,15 @@ public class Player {
 
     public void increaseNumRatings() {
         this.numRatings++;
+    }
+
+
+    public void addRating(Rating rating) {
+        this.ratings.insertEnd(rating);
+    }
+
+    public Iterator<Rating> getRatings() {
+        return this.ratings.values();
     }
 
 }

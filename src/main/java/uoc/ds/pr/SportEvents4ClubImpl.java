@@ -226,6 +226,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         sportEvent.addRating(newRating);
         // Reorder best sport events vector.
         this.bestSportEvents.update(sportEvent);
+        player.addRating(newRating);
         player.increaseNumRatings();
     }
 
@@ -529,12 +530,38 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         if (player == null) {
             throw new PlayerNotFoundException();
         }
+        List<Player> following = this.getFollowByType(playerId, "Followed");
+        if (following.isEmpty()) {
+            throw new NoPostsException();
+        }
 
-        //Iterator<Player> followings = this.getFollowings(playerId);
+        LinkedList<Post> posts = new LinkedList<>();
+        for (Iterator<Player> it = following.values(); it.hasNext();) {
+            Player currentPlayer = it.next();
+            for (Iterator<SportEvent> sportEvents = currentPlayer.getEvents(); sportEvents.hasNext();) {
+                SportEvent currentSportEvent = sportEvents.next();
+                String message = this.getMessage(currentPlayer.getId(), currentSportEvent.getEventId(), "signup", "");
+                posts.insertEnd(new Post(currentPlayer.getId(), message));
+            }
+            for (Iterator<uoc.ds.pr.model.Rating> ratings = currentPlayer.getRatings(); ratings.hasNext();) {
+                uoc.ds.pr.model.Rating currentRating = ratings.next();
+                String message = this.getMessage(currentPlayer.getId(), currentRating.getEventId(), "rating", currentRating.getRating().name());
+                posts.insertEnd(new Post(currentPlayer.getId(), message));
+            }
+        }
 
-        // Recorrer followings
+        if (posts.isEmpty()) {
+            throw new NoPostsException();
+        }
+        return posts.values();
+    }
 
-
+    private String getMessage(String playerId, String sportEventId, String action, String rating) {
+        if (action == "signup") {
+            return "{'player': '" + playerId + "', 'sportEvent': '" + sportEventId + "', 'action': 'signup'}";
+        } else if (action == "rating") {
+            return "{'player': '" + playerId + "', 'sportEvent': '" + sportEventId + "', 'rating': '" + rating + "', 'action': 'rating'}";
+        }
         return null;
     }
 

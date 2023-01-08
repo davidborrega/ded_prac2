@@ -51,4 +51,8 @@ public class Rating {
         return message;
     }
 
+    public SportEvents4Club.Rating getRating() {
+        return rating;
+    }
+
 }
