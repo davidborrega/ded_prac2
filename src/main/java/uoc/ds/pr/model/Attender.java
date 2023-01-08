@@ -24,14 +24,6 @@ public class Attender {
         this.eventId = eventId;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getEventId() {
-        return eventId;
-    }
-
     public String getPhone() {
         return phone;
     }

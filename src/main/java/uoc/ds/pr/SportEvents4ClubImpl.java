@@ -64,7 +64,7 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         this.numRoles = 0;
 
         // Workers
-        this.workers = new HashTable<String, Worker>();
+        this.workers = new HashTable<>();
         this.numWorkers = 0;
 
         // Social network
@@ -436,8 +436,6 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             throw new PlayerNotFoundException();
         }
         if (playerId != playerFollowerId) {
-            //System.out.println("Followed: " + playerToFollow.getId());
-            //System.out.println("Follower: " + follower.getId());
             // Add Follower
             Edge<String, Player> edge1 = socialNetwork.newEdge(socialNetwork.getVertex(playerToFollow), socialNetwork.getVertex(follower));
             edge1.setLabel("Follower");
@@ -454,7 +452,6 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
             throw new NoFollowersException();
         }
         return followers.values();
-
     }
 
     @Override
