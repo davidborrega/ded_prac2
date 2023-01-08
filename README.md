@@ -240,8 +240,15 @@ DSException
 Per tal de calcular la ordenació dels diferents TADs utilitzats per als esdeveniments esportius (en aquest cas, *OrderedVector* i *OrderVectorDictionary*) es fa servir el *comparator* de Java.
 Es defineixen dos tipus de comparadors:
 
- - ***String comparator*** (COMPARATOR): utilitzem el comparador String per a comparar i ordenar els identificadors dels esdeveniments esportius que trobarem en el vector ordenat.
- - ***Rating comparator*** (COMPARATOR_BEST_SPORTEVENT): utilitzem el comparador de la classe SportEvent amb el mètode anomenat rating, que calcula la mitjana de valoracions d'un esdeveniment en concret. Ens ordenarà en funció de la valoració mitjana de l'esdeveniment.
+ - ***String comparator*** (CMP_K): utilitzem el comparador String per a comparar i ordenar els identificadors dels esdeveniments esportius que trobarem en el vector ordenat.
+ - ***Rating comparator*** (CMP_V): utilitzem el comparador de la classe SportEvent amb el mètode anomenat rating, que calcula la mitjana de valoracions d'un esdeveniment en concret. Ens ordenarà en funció de la valoració mitjana de l'esdeveniment.
+
+### OrganizingEntity
+
+Per tal de calcular l'ordre de les millors entitats organitzatives, es fa servir el *comparator* de Java. En aquest cas, s'avalua per l'aforament.
+
+- ***OrganizingEntity comparator*** (CMP_MOST_ATTENDERS)
+
 
 ### Enrollment
 
@@ -249,7 +256,11 @@ Per tal de calcular l'ordre de les inscripcions d'un determinat esdeveniment per
 
 - ***Player comparator*** (CMP_PLAYER)
 
-  
+### File
+
+Per tal de calcular l'ordre i la prioritat de l'avaluació de les sol·licituds, es fa servir el *comparator* de Java. En aquest cas, s'avalua per la data de sol·licitud i l'aforament.
+
+- ***File comparator*** (CMP_Q)
 
 ## Joc de proves
 La versió inicial del projecte tenia implementat els jocs de proves SportEvents4ClubPR1Test i ResourceUtilTest els quals han servit de guía per a la implementació i el desenvolupament de la pràctica. 
