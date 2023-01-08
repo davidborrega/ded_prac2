@@ -231,9 +231,9 @@ La versió inicial del projecte tenia implementat els jocs de proves SportEvents
 Anem a detallar cada un dels jocs de proves:
 ### SportEvents4ClubPR1Test:
 
- - ***addPlayerTest*** (*throws LimitExceededException*): comprova si s'afegeixen jugadors en el vector de jugadors.
- - ***addOrganizingEntityTest***(*throws LimitExceededException*): comprova si s'afegeixen entitats organitzadores en el vector d'entitats organitzadores.
- - ***addFileTest*** (*throws DSException*): comprova si s'afegeixen fitxes en la cua de fitxes.
+ - ***addPlayerTest*** (*throws LimitExceededException*): comprova si s'afegeixen jugadors en el AVL de jugadors.
+ - ***addOrganizingEntityTest***(*throws LimitExceededException*): comprova si s'afegeixen entitats organitzadores en la taula de dispersió d'entitats organitzadores.
+ - ***addFileTest*** (*throws DSException*): comprova si s'afegeixen fitxes en la cua de prioritat de fitxes.
  - ***updateFileTest*** (*throws DSException*): comprova si s'actualitza l'estat de la fitxa en qüestió i, si desencadena altres accions com la creació o no d'esdeveniments esportius.
  - ***signUpEventTest*** (*throws DSException*): comprova si es completen les inscripcions dels jugadors en els diferents esdeveniments esportius, les seves excepcions i si en cas d'arribar al màxim, s'inscriuen com a reserva.
  -  ***getEventsByOrganizingEntityTest*** (*throws DSException*): comprova si donada una entitat organitzativa, existeixen events esportius.
@@ -241,6 +241,32 @@ Anem a detallar cada un dels jocs de proves:
  - ***getSportEventsByPlayer***(*throws DSException*):  comprova si donat un jugador, existeixen events esportius.
  - ***mostActivePlayer***(*throws DSException*): comprova el jugador més participatiu del sistema.
  - ***addRatingAndBestEventTest***(*throws DSException*): comprova si es dóna d'alta una valoració en el vector ordenat per, posteriorment, comprovar si s'actualitza el vector ordenat de valoracions per la seva ponderació.
+
+### SportEvents4ClubPR2Test:
+
+ - ***addRoleTest***: comprova si s'afegeixen nous rols en el vector de rols.
+ - ***adWorkerTest***: comprova si s'afegeixen nous treballadors en la taula de dispersió de treballadors.
+ - ***assignWorkerTest*** (*throws DSException*): comprova si s'asignen treballadors a un esdeveniment.
+ - ***getWorkersBySportEventTest*** (*throws DSException*): comprova si existeixen treballadors per a un esdeveniment esportiu.
+ - ***getWorkersByRoleTest*** (*throws DSException*): comprova si existeixen treballadors per a un determinat rol.
+ - ***getLevelTest*** (*throws DSException*): comprova els diferents nivells que pot tenir un determinat jugador.
+ - ***getSubstitutesTest*** (*throws DSException*): comprova el control d'inscripcions i, per tant, si existeixen substituts en esdeveniments esportius.
+ - ***addAttender*** (*throws DSException*): comprova si s'afegeix un nou assistent a un esdeveniment esportiu.
+ - ***getAtterdersTest*** (*throws DSException*): comprova si existeixen assistents en un esdeveniment esportiu.
+ - ***best5OrganizingEntitiesTest*** (*throws DSException*): comprova les 5 millors entitats organitzadores en funció del assistents.
+ - ***bestSportEventByAttenders*** (*throws DSException*): comprova el millor esdeveniment esportiu en funció del número d'assistents.
+
+ ### SportEvents4ClubPR2TestPlus:
+
+ - ***addFollowerTest*** (*throws DSException*): comprova si s'afegeixen nous seguidors en un jugador.
+ - ***getFollowersTest*** (*throws DSException*): comprova si existeixen seguidors d'un determinat jugador.
+ - ***getFollowingsTest*** (*throws DSException*): comprova si existeixen jugadors a seguir d'un determinat jugador.
+ - ***recommendationTest*** (*throws DSException*): comprova si existeixen recomanacions de seguidors d'un determinat jugador.
+ - ***getPostsTest*** (*throws DSException*): comprova si existeixen publicacions per als jugadors seguits d'un determinat jugador.
+
+ ### LevelHelperTest:
+Aquest joc de proves es basa en avaluar el nivell de joc donat un paràmetre de tipus *LEVEL* de la classe de recolzament LevelHelper.
+ - ***levelHelperTest***: comprova els diferents nivells que es poden donar donat un determinat nivell de jugador.
 
 ### ResourceUtilTest
 Aquest joc de proves es basa en avaluar el nivell de permisos donat un paràmetre de tipus byte en el mètode *getFlag* de la classe d'utilitat ResourceUtil.
@@ -251,32 +277,7 @@ Cada un dels casos de prova de **ResourceUtilTest** té definit un número de pa
 - ***hasFlagTest3***
 - ***hasFlagTest4***
 
- Addicionalment, s'ha creat una nova classe per al joc de proves adicionals sobre la implementació de **SportEvents4ClubImpl**, on s'han realitzat totes aquelles proves adicionals que no s'han contemplat en el joc de proves inicial.
-
- ### SportEvents4ClubPR1AdditionalTest:
-- ***testAddPlayerLimitExceeded*** (*throws LimitExceededException*): comprova si hi ha excés de jugadors en el vector a l'hora de fer el alta.
-- ***testAddOrganizingEntityLimitExceeded*** (*throws LimitExceededException*): comprova si hi ha excés d'entitats organitzatives en el vector a l'hora de fer el alta.
-- ***testAddFileOrganizingEntityNotFound***: comprova si existeix l'entitat organitzativa a l'hora de fer l'alta.
-- ***testUpdateFileFilesNotFound***: comprova si pot tractar fitxes en el cas que no hi hagin donades d'alta
-- ***testAddSportEventFullContainer*** (*throws LimitExceededException*): comprova si hi ha excés en el vector ordenat d'esdeveniments esportius.
-- ***testAddRatingSportEventNotFound***: comprova si existeix esdeveniment esportiu a l'hora d'afegir una nova valoració.
-- ***testAddRatingPlayerNotFound*** (*throws LimitExceededException*): comprova si existeix jugador a l'hora d'afegir una nova valoració.
-- ***testAddRatingPlayerNotInSportEventException***: comprova si el jugador ha estat inscrit a un determinat esdeveniment a l'hora d'afegir una nova valoració.
-- ***testGetRatingsSportEventNotFound***: comprova si existeix esdeveniment esportiu a l'hora de retornar les valoracions.
-- ***testMostActivePlayerWithPlayerNotFound***: comprova si existeix jugadors en el vector per tal de mostrar el més participatiu.
-- ***testBestSportEventWithSportEventNotFoundException***: comprova si existeixen esdeveniments esportius en el vector ordenat de millor esdeveniment.
-- ***testSignUpEventPlayerNotFound***: comprova si existeix jugador a l'hora de fer la inscripció.
-- ***testSignUpEventSportEventNotFound***: comprova si existeix esdeveniment esportiu a l'hora de fer la inscripció.
-- ***testGetEventsByPlayerNoSportEventsFound***: comprova si existeixen esdeveniments esportius en el jugador.
-
-En quant a la implementació del TAD de vector ordenat, s'ha preparat un joc de proves adicionals a la classe de prova **OrderedVectorTest**.
- ### OrderedVectorTest:
-- ***testAddandIsFull***: comprova quan es dona d'alta un element i si ha excés.
-- ***testIsEmpty***: comprova si el vector està buit o no.
-- ***testGetElementSizeAndValues***: comprova el tamany del vector.
-- ***testCheckInAlphabeticOrder***: comprova que es realitzi la ordenació alfabètica en l'alta d'elements en el vector.
-- ***testUpdateAndCheckInAlphabeticOrder***: comprova que es realitzi la ordenació alfabètica en l'update d'elements en el vector.
-- ***testDeleteAndCheckOrder***: comprova que es realitzi la ordenació alfabètica en la baixa d'elements en el vector.
+En quant a la implementació del TAD de vector ordenat i diccionari ordenat (fet servir en la PR1), s'ha preparat un joc de proves adicionals a la classe de prova **OrderedVectorTest** i **DicctionaryOrderedVectorTest**..
 
 En el següent apartat s'inclouen diferents captures de pantalla referents al resultat dels diferents jocs de proves utilitzats.
 ## Annex
@@ -284,8 +285,5 @@ En el següent apartat s'inclouen diferents captures de pantalla referents al re
  - /screenshoot/SportEvents4ClubPR1Test.jpg
  - /screenshoot/SportEvents4ClubPR2Test.jpg
  - /screenshoot/SportEvents4ClubPR2TestPlus.jpg
- - /screenshoot/DicctionaryOrderedVectorTest.jpg
- - /screenshoot/LevelHelperTest.png
- - /screenshoot/OrderedVectorTest.png
- - /screnshoot/ResourceUtilTest.png 
- - /screenshoot/AllTest.png
+ - /screenshoot/Utils.jpg
+ - /screenshoot/AllTests.jpg
