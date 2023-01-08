@@ -226,8 +226,8 @@ public class SportEvents4ClubImpl implements SportEvents4Club {
         sportEvent.addRating(newRating);
         // Reorder best sport events vector.
         this.bestSportEvents.update(sportEvent);
+        // Add list of ratings in player
         player.addRating(newRating);
-        player.increaseNumRatings();
     }
 
     @Override

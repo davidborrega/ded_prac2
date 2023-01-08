@@ -22,8 +22,6 @@ public class Player {
 
     private SportEvents4Club.Level level;
 
-    private int numRatings;
-
     private LinkedList<Rating> ratings;
 
     public Player(String idUser, String name, String surname, LocalDate birthday) {
@@ -32,7 +30,6 @@ public class Player {
         this.setSurname(surname);
         this.setBirthday(birthday);
         this.events = new LinkedList<>();
-        this.setNumRatings(0);
         this.ratings = new LinkedList<>();
     }
 
@@ -76,14 +73,6 @@ public class Player {
         return LevelHelper.getLevel(this.getNumRatings());
     }
 
-    public void setNumRatings(int numRatings) {
-        this.numRatings = numRatings;
-    }
-
-    public boolean is(String playerID) {
-        return id.equals(playerID);
-    }
-
     public void addEvent(SportEvent sportEvent) {
         events.insertEnd(sportEvent);
     }
@@ -114,13 +103,8 @@ public class Player {
     }
 
     public int getNumRatings() {
-        return this.numRatings;
+        return this.ratings.size();
     }
-
-    public void increaseNumRatings() {
-        this.numRatings++;
-    }
-
 
     public void addRating(Rating rating) {
         this.ratings.insertEnd(rating);
