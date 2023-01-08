@@ -111,18 +111,29 @@ Totes aquestes entitats tenen en comú:
 
 #### Player
 
-Emmagatzema una llista encadenada d'esdeveniments esportius.
+- Emmagatzema una llista encadenada d'esdeveniments esportius.
+
+- Emmagatzema una llista encadenada de valoracions.
 
 #### OrganizingEntity
 
-Emmagatzema una llista encadenada d'esdeveniments esportius.
+- Emmagatzema una llista encadenada d'esdeveniments esportius.
 
 #### SportEvents
 
 - Emmagatzema una cua d'inscripcions de jugadors.
 
+- Emmagatzema una cua prioritària d'inscripcions de jugadors suplents.
+
 - Emmagatzema una llista encadenada de valoracions.
 
+- Emmagatzema una llista encadenada de treballadors.
+
+- Emmagatzema una taula de dispersió d'asistents.
+
+#### Role
+
+- Emmagatzema una llista encadenada de treballadors.
   
 
 ### Tipus de TADS utilitzats
@@ -135,7 +146,15 @@ Per una banda, s'utilitzen els següents TAD ja existents en la llibreria:
 
 -  **QueryArrayImpl** <*edu.uoc.ds.adt.sequential*>: per a la implementació de les cues.
 
-  
+- **HashTable** <*edu.uoc.ds.adt.nonlinear*>: per a la implementació de taules de dispersió.
+
+- **DictionaryAVLImpl** <*edu.uoc.ds.adt.nonlinear*>: per a la implementació AVL.
+
+- **PriorityQueue** <*edu.uoc.ds.adt.nonlinear*>: per a la implementació de cues de prioritat.
+
+Per a la xarxa social, s'utilitzen els següents TAD:
+
+- **DirectedGraphImpl** <*edu.uoc.ds.adt.nonlinear.graphs.*>: per a la implementació d'un graf dirigit.
 
 D'una altra, s'han creat nous TAD:
 
@@ -223,6 +242,12 @@ Es defineixen dos tipus de comparadors:
 
  - ***String comparator*** (COMPARATOR): utilitzem el comparador String per a comparar i ordenar els identificadors dels esdeveniments esportius que trobarem en el vector ordenat.
  - ***Rating comparator*** (COMPARATOR_BEST_SPORTEVENT): utilitzem el comparador de la classe SportEvent amb el mètode anomenat rating, que calcula la mitjana de valoracions d'un esdeveniment en concret. Ens ordenarà en funció de la valoració mitjana de l'esdeveniment.
+
+### Enrollment
+
+Per tal de calcular l'ordre de les inscripcions d'un determinat esdeveniment per el nivell de valoració del jugador, es fa servir el *comparator* de Java.
+
+- ***Player comparator*** (CMP_PLAYER)
 
   
 
